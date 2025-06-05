@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>作品展示</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; max-width: 800px; margin: auto; }
+    .card { border: 1px solid #ccc; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; }
+    img { max-width: 100%; border-radius: 10px; }
+    .more { display: none; color: #666; }
+    button { margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>作品展示</h1>
+  <div id="gallery"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIoc1fNrt1nEKCEIudyI5RbUoEoMnHjC4",
+      authDomain: "project-1794046914053590475.firebaseapp.com",
+      projectId: "project-1794046914053590475",
+      storageBucket: "project-1794046914053590475.appspot.com",
+      messagingSenderId: "20498756386",
+      appId: "1:20498756386:web:0e01ab4f3e7bf01be1eb7b"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const gallery = document.getElementById("gallery");
+
+    db.collection("works").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+      gallery.innerHTML = "";
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <img src="${data.imageUrl}" alt="${data.title}">
+          <h3>${data.title}</h3>
+          <p><button onclick="this.nextElementSibling.style.display = (this.nextElementSibling.style.display === 'block') ? 'none' : 'block'">顯示更多</button></p>
+          <div class="more">${data.description || "（無描述）"}</div>
+        `;
+        gallery.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>
